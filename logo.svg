@@ -1,6 +1,53 @@
-<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1024" height="1024" rx="200" fill="#5865F2"/>
-    <path d="M256 320C256 284.654 284.654 256 320 256H704C739.346 256 768 284.654 768 320V576C768 611.346 739.346 640 704 640H512L320 768V640H320C284.654 640 256 611.346 256 576V320Z" fill="white"/>
-    <path d="M384 416L448 544L512 416L576 544L640 416" stroke="#5865F2" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M448 320L512 256L576 320" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     style="position:fixed;top:0;left:0;width:100%;height:100%;display:block;">
+
+  <title>Westcord</title>
+
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <body xmlns="http://www.w3.org/1999/xhtml"
+          style="margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;">
+      <iframe id="f"
+              style="position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;display:block;">
+      </iframe>
+    </body>
+  </foreignObject>
+
+  <script type="text/javascript">
+  <![CDATA[
+  (function() {
+    var frame = document.getElementById("f");
+    
+    // Fetch the main index.html of the group chat
+    fetch('./index.html')
+      .then(function(r) {
+        if (!r.ok) throw new Error("Could not load app");
+        return r.text();
+      })
+      .then(function(html) {
+        // We need to adjust relative paths because the Blob URL will have a different origin/base
+        // However, since we are loading it via an iframe, we might just want to set src directly if we can
+        // But the user wants the "injection" feel, so we'll use a Blob.
+        
+        // Note: For relative scripts/css to work, we'd normally need to inject a <base> tag
+        var dir = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        var baseTag = '<base href="' + dir + '">';
+        var finalHtml = html.replace('<head>', '<head>' + baseTag);
+        
+        var blob = new Blob([finalHtml], { type: "text/html" });
+        frame.src = URL.createObjectURL(blob);
+        
+        // Update Title
+        document.title = "Westcord";
+      })
+      .catch(function(err) {
+        console.error(err);
+        // Fallback or error message
+        frame.contentDocument.body.innerHTML = "<h1 style='color:white; font-family:sans-serif; text-align:center; margin-top:20%;'>Failed to load Westcord</h1>";
+      });
+  }());
+  ]]>
+  </script>
+
 </svg>
